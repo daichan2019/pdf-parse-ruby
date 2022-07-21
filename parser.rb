@@ -1,46 +1,29 @@
 require 'pdf-reader'
 
-class BaseReader
-  def initialize(file_path:)
-    @client = PDF::Reader.new(file_path)
-  end
+File.open('dummy.pdf', 'rb') do |io|
+  reader = PDF::Reader.new(io)
+  pages = []
 
-  attr_reader :client
+  # Parsing PDF
+  reader.pages.each do |page|
+    rows = []
+    # Separating a whole text
+    t = page.text.split("\n")
 
-  def pages
-    client.pages.map { |page| Page.new(page) }
-  end
+    t.each do |s|
+      # Formatting
+      ary = s.split("\s\s")
+      ary.delete_if { |str| str.nil? || str.empty? }
+      ary.each(&:strip!)
+      next if ary.empty?
 
-  class Page
-    def initialize(page)
-      @page = page
+      rows << ary
     end
-
-    attr_reader :page
-
-    def text
-      page.text
-    end
-  end
-end
-
-
-class CustomReader < BaseReader
-  def pages
-    client.pages.map { |page| Page.new(page) }
+    pages << rows
   end
 
-  class Page < BaseReader::Page
-    START_RECORD_INDEX = 18
-    END_RECORD_INDEX = -2
-    CLUMN_DELIMITER = "\t"
-
-    def formatted_records
-      # NOTE: 以下を行い整形
-      # * 2文字以上の空白文字を列の区切りとみなし区切り文字に変換
-      # * 空白な行を削除
-      # * 各ページのheader部分の行を削除
-      text.gsub(/\x20{2,}/, CLUMN_DELIMITER).split(/\R/).reject(&:empty?)[START_RECORD_INDEX..END_RECORD_INDEX]
-    end
+  # Showing parsed data
+  pages.each do |page|
+    page.each { |rows| p rows }
   end
 end
