@@ -1,6 +1,6 @@
 require 'pdf-reader'
 
-File.open('dummy.pdf', 'rb') do |io|
+File.open('61_101.pdf', 'rb') do |io|
   reader = PDF::Reader.new(io)
   pages = []
 

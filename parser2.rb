@@ -45,7 +45,7 @@ class CustomReader < BaseReader
   end
 end
 
-pdf = CustomReader.new(file_path: 'dummy.pdf')
+pdf = CustomReader.new(file_path: '61_101.pdf')
 pp parsed = pdf.pages
 
 parsed.each do |page|
