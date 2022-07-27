@@ -6,18 +6,13 @@ class ParserService
   CLUMN_DELIMITER = "\t"
 
   def initialize(file_path:)
-    @client = PDF::Reader.new(file_path)
+    @reader = PDF::Reader.new(file_path)
   end
 
   def parse
-    @client.pages.map do |page|
-      # * 2文字以上の空白文字を列の区切りとみなし区切り文字に変換
-      # * 空白な行を削除
-      # * 各ページのheader部分の行を削除
-      page.text.gsub(/\x20{2,}/, CLUMN_DELIMITER).split(/\R/).reject(&:empty?)[START_RECORD_INDEX..END_RECORD_INDEX]
-    end
+    @reader.pages.map { |page| @text =  page.text.split("\n") }
   end
 end
 
 file = ParserService.new(file_path: 'dummy.pdf')
-pp file.parse
+file.parse
